@@ -1,0 +1,437 @@
+/* ==========================================
+   १. मुख्य कंटेनर आणि लेआउट बेस
+   ========================================== */
+.dash-container {
+    background-color: #f4f7f9;
+    min-height: 100vh;
+    padding-bottom: 30px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    box-sizing: border-box; /* पॅडिंगमुळे स्क्रीन बाहेर जाणार नाही */
+}
+
+/* नेव्हबार स्टाईल */
+.navbar {
+    background: rgb(213, 205, 255);
+    color: white;
+    padding: 1rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    margin-bottom: 25px;
+    box-sizing: border-box;
+}
+
+.navbar h2 {
+    margin: 0;
+    font-size: 1.5rem;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    color: black;
+}
+
+.logout-btn {
+    background: #e74c3c;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.logout-btn:hover { background: #c0392b; }
+
+/* ==========================================
+   २. स्टॅट्स कार्ड्स ग्रीड (Top Cards)
+   ========================================== */
+.stats-grid {
+    display: grid;
+    /* repeat(auto-fit) मुळे मोबाईलवर ३ कार्ड्स एकाखाली एक येतील */
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); 
+    gap: 20px;
+    padding: 20px 2rem;
+    box-sizing: border-box;
+}
+
+.stat-card {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    text-align: center;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    transition: transform 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 160px;
+    box-sizing: border-box;
+}
+
+.stat-card:hover { transform: translateY(-5px); }
+.stat-card h3 {
+    font-size: 0.9rem;
+    color: #7f8c8d;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+}
+.stat-card .amount {
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin: 10px 0;
+}
+.saving-status small, .expense-status small {
+    font-weight: 500;
+    display: block;
+    margin-top: 5px;
+}
+
+/* प्रोग्रेस बार */
+.budget-progress-container {
+    background: #e0e0e0;
+    border-radius: 10px;
+    height: 25px;
+    margin: 0 2rem 30px;
+    overflow: hidden;
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.2);
+}
+
+.progress-bar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: width 0.5s ease-in-out;
+}
+
+/* ==========================================
+   ३. कॅटेगरी ग्रीड (Category Budget Cards)
+   ========================================== */
+.category-grid {
+    display: grid;
+    /* आधी इथे repeat(4, 1fr) फिक्स होतं, आता हे मोठ्या स्क्रीनवर ४ आणि मोबाईलवर आपोआप १ करेल */
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); 
+    gap: 15px; 
+    padding: 0 2rem;
+    box-sizing: border-box;
+}
+
+.category-card {
+    background: white;
+    padding: 12px 15px; 
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    border-left: 5px solid #764ba2;
+    min-height: 120px; 
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    box-sizing: border-box;
+}
+
+.category-card.over-limit {
+    background: #fff5f5;
+    border-left-color: #e74c3c;
+}
+.category-card-header {
+    font-size: 0.9rem; 
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.category-amount {
+    font-size: 1.2rem !important; 
+    margin: 5px 0 !important;
+}
+.category-limit-info {
+    font-size: 0.8rem;
+    color: #666;
+}
+.alert-text {
+    font-size: 0.75rem;
+    margin-top: 2px;
+    font-weight: bold;
+}
+
+/* ==========================================
+   ४. 🛠️ पाई-चार्ट आणि चार्ट्स विभाग (Fixed Overlapping) 🛠️
+   ========================================== */
+.charts-grid {
+    display: grid;
+    /* लॅपटॉपवर शेजारी-शेजारी, मोबाईलवर एकाखाली एक */
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); 
+    gap: 20px;
+    padding: 20px 2rem;
+    box-sizing: border-box;
+}
+.recharts-responsive-container {
+    width: 100% !important;
+    height: 300px !important; /* रिस्पॉन्सिव्ह कंटेनरची हाईट फिक्स केली */
+}
+.chart-card {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    min-height: 380px; /* कमीत कमी उंची वाढवली */
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+}
+
+/* चार्टच्या आत असणारा रिॲक्टचा कॅनव्हास (Canvas) कंट्रोल करण्यासाठी */
+.chart-card canvas {
+    max-width: 100% !important;
+    max-height: 280px !important; /* मोबाईलवर पाई चार्ट ओव्हरलॅप होऊ नये म्हणून हाईट लॉक केली */
+    margin: auto !important; /* सेंटरला आणण्यासाठी */
+}
+
+.spending-trend-container {
+    width: 100%;
+    height: 100%;
+    min-height: 280px;
+}
+
+/* ==========================================
+   ५. डेटा टेबल्स आणि फिल्टर्स
+   ========================================== */
+.table-responsive {
+    margin: 30px 2rem;
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    overflow-x: auto; /* टेबल मोठा असल्यास फक्त टेबलचा भाग स्क्रोल होईल */
+    -webkit-overflow-scrolling: touch;
+    box-sizing: border-box;
+}
+
+.expense-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 600px; /* मोबाईलवर टेबल गिचमीड होणार नाही */
+}
+
+.expense-table th {
+    background-color: #f8f9fa;
+    color: #2c3e50;
+    text-align: left;
+    padding: 12px;
+    border-bottom: 2px solid #eee;
+}
+
+.expense-table td {
+    padding: 12px;
+    border-bottom: 1px solid #eee;
+    white-space: nowrap; /* बटणे एकाच लाईनमध्ये लॉक राहतील */
+}
+
+.badge {
+    background: #764ba2;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    display: inline-block;
+}
+
+/* फिल्टर्स कंटेनर */
+.filter-container {
+    display: flex;
+    align-items: center;
+    background: white;
+    padding: 15px 2rem !important;
+    margin: 0 2rem 20px !important;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    box-sizing: border-box;
+    flex-wrap: wrap; /* मोबाईलवर खाली येण्यासाठी */
+    gap: 10px;
+}
+
+/* ==========================================
+   ६. कृती बटन्स (Action Buttons)
+   ========================================== */
+.action-buttons {
+    display: flex;
+    gap: 15px;
+    margin: 20px 0;
+    justify-content: center; 
+    width: 100%;
+    flex-wrap: wrap; /* मोबाईलवर बटन्स एकाखाली एक येतील */
+    padding: 0 2rem;
+    box-sizing: border-box;
+}
+
+.action-buttons button {
+    padding: 10px 20px;
+    border-radius: 8px;
+    border: none;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.95rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    box-sizing: border-box;
+}
+
+.btn-primary-action { background: linear-gradient(135deg, #2c3e50, #4ca1af); color: white; }
+.btn-primary-action:hover {
+    background: linear-gradient(135deg, #1a252f, #357e8a);
+    transform: translateY(-2px);
+}
+
+.btn-pdf-action { background: #ffffff; color: #764ba2; border: 2px solid #764ba2 !important; }
+.btn-pdf-action:hover { background: #764ba2; color: white; transform: translateY(-2px); }
+
+.btn-goal-action { background: linear-gradient(135deg, #f39c12, #f1c40f); color: white; border-radius: 8px; cursor: pointer; transition: 0.3s; }
+.btn-goal-action:hover { transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
+
+/* टेबलमधील एडिट आणि डिलीट बटन्स */
+.btn-edit, .btn-delete {
+    padding: 6px 12px;
+    margin: 0 5px;
+    border: none;
+    border-radius: 5px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+.btn-edit { background-color: #007bff; color: white; }
+.btn-edit:hover { background-color: #0056b3; transform: translateY(-1px); }
+.btn-delete { background-color: #dc3545; color: white; }
+.btn-delete:hover { background-color: #a71d2a; transform: translateY(-1px); }
+
+.edit-btn1 {
+  background: linear-gradient(135deg, #463edf, #221b5e); color: white; border: none; padding: 10px 18px; font-size: 15px; font-weight: 600; border-radius: 8px; cursor: pointer; transition: all 0.3s ease;
+}
+.edit-btn1:hover { transform: translateY(-2px); }
+
+/* ==========================================
+   ७. टिकर, हेडलाईन्स आणि डार्क मोड
+   ========================================== */
+.news-ticker-container { width: 100%; overflow: hidden; background: #f8f9fa; padding: 10px 0; border-radius: 5px; border: 1px solid #ddd; margin-top: 15px; }
+.ticker-text { display: inline-block; white-space: nowrap; padding-left: 100%; animation: marquee 15s linear infinite; font-size: 16px; font-weight: bold; }
+@keyframes marquee { 0% { transform: translate(0, 0); } 100% { transform: translate(-100%, 0); } }
+.news-ticker-container:hover .ticker-text { animation-play-state: paused; }
+
+.headline-container { width: 100%; overflow: hidden; background: linear-gradient(90deg, #ff9a9e 0%, #fecfef 100%); color: #333; padding: 12px 0; margin-bottom: 20px; border-radius: 10px; font-weight: bold; border-left: 5px solid #ff4b2b; }
+.headline-text { display: flex; white-space: nowrap; animation: moveHeadline 20s linear infinite; }
+.headline-text span { padding-right: 50px; font-size: 1.1rem; }
+@keyframes moveHeadline { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
+.headline-container:hover .headline-text { animation-play-state: paused; }
+
+/* डार्क मोडचे नियम */
+.dashboard-container { min-height: 100vh; width: 100%; background-color: #f4f7f6; transition: background-color 0.3s ease, color 0.3s ease; }
+.dashboard-container.dark-mode { background-color: #121212 !important; color: #ffffff !important; }
+.dark-mode .stat-card, .dark-mode .category-card, .dark-mode .chart-card, .dark-mode .table-responsive, .dark-mode .navbar, .dark-mode .filter-container {
+    background-color: #1e1e1e !important; color: white !important; border: 1px solid #333 !important;
+}
+.dark-mode h2, .dark-mode h3, .dark-mode p, .dark-mode span, .dark-mode strong, .dark-mode .amount { color: #ffffff !important; }
+.dark-mode .headline-container { background: #333; color: #f1c40f; border-left: 5px solid #f1c40f; }
+.dark-mode .highlight-card { background: #2c2c2c !important; border: 1px solid #f39c12; }
+
+/* प्रोफाइल कार्ड सेक्शन */
+.profile-page-container { min-height: 100vh; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #74ebd5, #9face6); font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+.profile-card { background: #ffffff; padding: 30px 35px; border-radius: 15px; width: 100%; max-width: 420px; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15); transition: 0.3s ease; }
+.profile-card:hover { transform: translateY(-5px); }
+.form-group { margin-bottom: 18px; }
+.form-group label { display: block; font-weight: 600; margin-bottom: 6px; color: #555; }
+.form-group input, .form-select-profile { width: 100%; padding: 10px 12px; border-radius: 8px; border: 1px solid #ccc; font-size: 14px; transition: 0.3s; }
+.form-group input:focus, .form-select-profile:focus { border-color: #6c63ff; outline: none; box-shadow: 0 0 5px rgba(108, 99, 255, 0.3); }
+.profile-actions { display: flex; justify-content: space-between; margin-top: 20px; }
+.save-btn { flex: 1; padding: 10px; border: none; background: #6c63ff; color: #fff; border-radius: 8px; cursor: pointer; font-weight: 600; margin-right: 10px; transition: 0.3s; }
+.save-btn:hover { background: #574fd6; }
+.back-btn { flex: 1; padding: 10px; border: none; background: #f1f1f1; color: #333; border-radius: 8px; cursor: pointer; font-weight: 600; transition: 0.3s; }
+.back-btn:hover { background: #ddd; }
+.save-btn:disabled { background: #aaa; cursor: not-allowed; }
+.user-avatar-circle { width: 50px; height: 50px; border-radius: 50%; overflow: hidden; cursor: pointer; border: 2px solid #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.2); transition: 0.3s; }
+.user-avatar-circle:hover { transform: scale(1.1); }
+.user-avatar-circle img { width: 100%; height: 100%; object-fit: cover; }
+
+.shield-img { width: 110px; height: 110px; object-fit: contain; }
+.table-header{ margin-top: 30px; text-align: center; text-decoration: underline;}
+.highlight-card { animation: pulse 2s infinite; }
+@keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(243, 156, 18, 0.2); } 70% { box-shadow: 0 0 0 10px rgba(243, 156, 18, 0); } 100% { box-shadow: 0 0 0 0 rgba(243, 156, 18, 0); } }
+
+/* Google Translate Styles */
+#google_translate_element { margin-right: 15px; }
+.goog-te-gadget-simple { background-color: transparent !important; border: 1px solid #ccc !important; padding: 5px 10px !important; border-radius: 20px !important; display: flex !important; align-items: center !important; }
+.dark-mode .goog-te-gadget-simple { background-color: #333 !important; border-color: #555 !important; }
+.dark-mode .goog-te-gadget-simple span { color: white !important; }
+.goog-te-banner-frame.skiptranslate, .goog-te-banner-frame { display: none !important; visibility: hidden !important; }
+body { top: 0px !important; }
+.goog-logo-link { display:none !important; } 
+.goog-te-gadget { color: transparent !important; }
+#goog-gt-tt, .goog-te-balloon-frame { display: none !important; }
+.goog-text-highlight { background: none !important; box-shadow: none !important; }
+
+/* ==========================================
+   🔥 मुख्य रिस्पॉन्सिव्ह मीडिया क्वेरीज 🔥
+   ========================================== */
+
+/* ९९२ पिक्सेल (टॅब्लेट्स आणि लहान लॅपटॉप्स) */
+@media (max-width: 992px) {
+    .category-grid {
+        grid-template-columns: repeat(2, 1fr); /* २-२ चे ग्रुप होतील */
+    }
+}
+
+/* ७६८ पिक्सेल (मोबाईल व्ह्यू) */
+@media (max-width: 768px) {
+    .navbar {
+        flex-direction: column;
+        gap: 15px;
+        text-align: center;
+        padding: 1rem;
+    }
+    
+    .user-info {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .stats-grid {
+        padding: 10px 1rem;
+    }
+
+    .category-grid {
+        grid-template-columns: 1fr; /* सर्व कार्ड्स एकाखाली एक */
+        padding: 0 1rem;
+    }
+
+    @media (max-width: 768px) {
+    .charts-grid {
+        grid-template-columns: 1fr;
+        padding: 10px 1rem;
+    }
+
+    .chart-card {
+        min-height: 420px; /* मोबाईलवर लेजेंड्स ओव्हरलॅप होऊ नये म्हणून जास्त उंची दिली */
+        padding: 15px;
+    }
+}
+
+    .table-responsive {
+        margin: 20px 1rem;
+        padding: 10px;
+    }
+
+    .filter-container {
+        margin: 0 1rem 20px !important;
+        padding: 15px 1rem !important;
+        flex-direction: column;
+        align-items: stretch;
+    }
+}
