@@ -16,7 +16,8 @@ const ResetPassword = () => {
         }
 
         try {
-            const res = await axios.post('http://localhost:5000/api/reset-password', {
+            const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+            const res = await axios.post(`${API_URL}/api/reset-password`, {
                 otp, // टोकन ऐवजी OTP पाठवत आहोत
                 password
             });

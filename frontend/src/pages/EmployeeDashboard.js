@@ -73,12 +73,12 @@ const scrollingMessage = topCategory
 const userEmail = localStorage.getItem('userEmail'); 
 console.log("Current User Email:", userEmail); // कंसोलमध्ये चेक कर ईमेल दिसतोय का
 
-
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
 useEffect(() => {
     const user = JSON.parse(localStorage.getItem('user')); // लॉगिन असलेल्या युजरची माहिती
     if (user && user.profession) {
-        axios.get(`http://localhost:5000/api/user/categories/${user.profession}`)
+        axios.get(`${API_URL}/api/user/categories/${user.profession}`)
             .then(res => {
                 if (res.data.success) {
                     setAvailableCategories(res.data.categories);
@@ -96,7 +96,7 @@ const fetchLimits = async () => {
     if (!userEmail || userEmail === "null") return;
 
     try {
-        const response = await fetch(`http://localhost:5000/api/get-limits?email=${userEmail}`);
+        const response = await fetch(`${API_URL}/api/get-limits?email=${userEmail}`);
         if (response.ok) {
             const data = await response.json();
             const limitsObj = {};
@@ -149,7 +149,7 @@ const handleUpdateLimit = async (category) => {
         // --- बदल संपला ---
 
         try {
-            const response = await fetch('http://localhost:5000/api/update-limit', {
+            const response = await fetch(`${API_URL}/api/update-limit`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -176,7 +176,7 @@ const handleUpdateLimit = async (category) => {
     // खर्च लोड करण्यासाठी फंक्शन
     const fetchExpenses = useCallback(async (userId) => {
         try {
-            const res = await axios.get(`http://localhost:5000/api/get-expenses/${userId}`);
+            const res = await axios.get(`${API_URL}/api/get-expenses/${userId}`);
             if (res.data.success) {
                 setExpenses(res.data.expenses || []);
             }
@@ -203,7 +203,7 @@ const updateBudget = async () => {
     if (newBudget) {
         try {
             // बॅकएंड API ला कॉल करा (आपण आधीच /api/update-budget/:id बनवला आहे)
-            const res = await axios.put(`http://localhost:5000/api/update-budget/${user.id}`, { budget: newBudget });
+            const res = await axios.put(`${API_URL}/api/update-budget/${user.id}`, { budget: newBudget });
             
             if (res.data.success) {
                 setBudget(newBudget); // UI अपडेट करा
@@ -236,7 +236,7 @@ const deleteExpense = async (id) => {
 
     if (result.isConfirmed) {
         try {
-            const res = await axios.delete(`http://localhost:5000/api/delete-expense/${id}`);
+            const res = await axios.delete(`${API_URL}/api/delete-expense/${id}`);
             if (res.data.success) {
                 Swal.fire('Deleted!', 'Your expense has been deleted.', 'success');
                 fetchExpenses(user.id); // टेबल रिफ्रेश करा
@@ -278,7 +278,7 @@ const editExpense = (exp) => {
             console.log("Sending Data to Backend:", result.value); // हा डेटा कन्सोलवर दिसतोय का पहा
             try {
                 // खात्री करा की URL बरोबर आहे
-                const res = await axios.put(`http://localhost:5000/api/edit-expense/${exp.id}`, result.value);
+                const res = await axios.put(`${API_URL}/api/edit-expense/${exp.id}`, result.value);
                 
                 if (res.data.success) {
                     Swal.fire('Updated!', 'Expense updated successfully.', 'success');
@@ -376,7 +376,7 @@ const editExpense = (exp) => {
                     ...result.value, 
                     date: new Date().toISOString().split('T')[0] 
                 };
-                const res = await axios.post('http://localhost:5000/api/add-expense', finalData);
+                const res = await axios.post(`${API_URL}/api/add-expense`, finalData);
                 if (res.data.success) {
                     Swal.fire('Success', 'Expense Added!', 'success');
                     fetchExpenses(user.id);
@@ -516,7 +516,7 @@ const handleSetGoal = async () => {
 
     if (newGoal) {
         try {
-            const response = await axios.post('http://localhost:5000/api/update-goal', {
+            const response = await axios.post(`${API_URL}/api/update-goal`, {
                 email: localStorage.getItem('userEmail'),
                 goal: parseFloat(newGoal)
             });

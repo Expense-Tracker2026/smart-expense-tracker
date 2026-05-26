@@ -12,7 +12,8 @@ const ForgotPassword = () => {
 const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-        const res = await axios.post('http://localhost:5000/api/forgot-password', { email });
+        const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+        const res = await axios.post(`${API_URL}/api/forgot-password`, { email });
         if (res.data.success) {
             Swal.fire('Success', 'The OTP has been sent to your email!', 'success');
             

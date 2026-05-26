@@ -24,9 +24,11 @@ const StudentDashboard = () => {
     const [searchTerm, setSearchTerm] = useState('');
 
     useEffect(() => {
+
+        const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
         const user = JSON.parse(localStorage.getItem('user'));
         if (user && user.profession) {
-            axios.get(`http://localhost:5000/api/user/categories/${user.profession}`)
+            axios.get(`${API_URL}/api/user/categories/${user.profession}`)
                 .then(res => {
                     if (res.data.success) {
                         setAvailableCategories(res.data.categories);
@@ -38,7 +40,7 @@ const StudentDashboard = () => {
 
     const fetchExpenses = async (userId) => {
         try {
-            const res = await axios.get(`http://localhost:5000/api/get-expenses/${userId}`);
+            const res = await axios.get(`${API_URL}/api/get-expenses/${userId}`);
             if (res.data.success) {
                 setExpenses(res.data.expenses);
             }
@@ -109,7 +111,7 @@ const StudentDashboard = () => {
         if (newBudget) {
             try {
                 const updatedValue = parseFloat(newBudget);
-                const res = await axios.put(`http://localhost:5000/api/update-budget/${user.id}`, { 
+                const res = await axios.put(`${API_URL}/api/update-budget/${user.id}`, { 
                     budget: updatedValue 
                 });
 
@@ -179,7 +181,7 @@ const StudentDashboard = () => {
                         ...result.value, 
                         date: new Date().toISOString().split('T')[0] 
                     };
-                    const res = await axios.post('http://localhost:5000/api/add-expense', finalData);
+                    const res = await axios.post(`${API_URL}/api/add-expense`, finalData);
                     if (res.data.success) {
                         Swal.fire('Success', 'Expense Added!', 'success');
                         fetchExpenses(user.id);
@@ -201,7 +203,7 @@ const StudentDashboard = () => {
         });
         if (confirm.isConfirmed) {
             try {
-                await axios.delete(`http://localhost:5000/api/delete-expense/${id}`);
+                await axios.delete(`${API_URL}/api/delete-expense/${id}`);
                 Swal.fire('Deleted!', 'Removed.', 'success');
                 fetchExpenses(user.id); 
             } catch (err) {
@@ -243,7 +245,7 @@ const StudentDashboard = () => {
         }).then(async (result) => {
             if (result.isConfirmed) {
                 try {
-                    const res = await axios.put(`http://localhost:5000/api/edit-expense/${exp.id}`, result.value);
+                    const res = await axios.put(`${API_URL}/api/edit-expense/${exp.id}`, result.value);
                     if (res.data.success) {
                         Swal.fire('Updated!', 'Expense updated successfully.', 'success');
                         fetchExpenses(user.id);
@@ -279,7 +281,7 @@ const StudentDashboard = () => {
 
         if (newLimit) {
             try {
-                const response = await axios.post('http://localhost:5000/api/update-limit', {
+                const response = await axios.post(`${API_URL}/api/update-limit`, {
                     email: userEmail,
                     category: category.trim(),
                     limit: parseFloat(newLimit)
@@ -377,7 +379,7 @@ const StudentDashboard = () => {
         if (newGoal) {
             const goalValue = parseFloat(newGoal);
             try {
-                const response = await axios.post('http://localhost:5000/api/update-goal', {
+                const response = await axios.post(`${API_URL}/api/update-goal`, {
                     email: localStorage.getItem('userEmail'),
                     goal: goalValue
                 });
@@ -402,7 +404,7 @@ const StudentDashboard = () => {
         const userEmail = localStorage.getItem('userEmail');
         if (userEmail) {
             setLoading(true);
-            axios.get(`http://localhost:5000/api/user-data?email=${userEmail}`)
+            axios.get(`${API_URL}/api/user-data?email=${userEmail}`)
                 .then(res => {
                     if (res.data.success) {
                         const dbGoal = Number(res.data.savings_goal) || 0;

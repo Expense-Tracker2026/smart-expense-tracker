@@ -41,7 +41,9 @@ const handleUpdate = async (e) => {
     };
 
     try {
-        const res = await axios.put('http://localhost:5000/api/update-profile', updatePayload);
+
+        const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+        const res = await axios.put(`${API_URL}/api/update-profile`, updatePayload);
         
         if (res.data.success) {
             // १. नवीन डेटा तयार करा

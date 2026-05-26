@@ -47,7 +47,7 @@ const employeeCats = allCategories.filter(c => c.profession === 'Employee');
 // २. फक्त नावांची लिस्ट (Array) तयार करा
 const studentNames = studentCats.map(c => c.category_name); // उदा: ["Gym", "Library"]
 const employeeNames = employeeCats.map(c => c.category_name); // उदा: ["Salary"]
-
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
 const professionChartData = {
     labels: ['Student', 'Employee'],
@@ -88,7 +88,8 @@ const chartOptions = {
 
     const fetchAdminData = async () => {
         try {
-            const res = await axios.get('http://localhost:5000/api/admin/all-users');
+            const res = await axios.get(`${API_URL}/api/admin/all-users`);
+           
             if (res.data.success) {
                 setUsers(res.data.users); 
                 setTotalExpense(res.data.totalSystemExpense);
@@ -112,32 +113,11 @@ const chartOptions = {
 
  
 
-    // const handleDeleteUser = async (id, name) => {
-    //     const confirm = await Swal.fire({
-    //         title: `Delete ${name}?`,
-    //         text: "This will remove all their data forever!",
-    //         icon: 'warning',
-    //         showCancelButton: true,
-    //         confirmButtonColor: '#d33',
-    //         confirmButtonText: 'Yes, Delete'
-    //     });
 
-    //     if (confirm.isConfirmed) {
-    //         try {
-    //             const res = await axios.delete(`http://localhost:5000/api/admin/delete-user/${id}`);
-    //             if (res.data.success) {
-    //                 Swal.fire('Deleted!', 'User has been removed.', 'success');
-    //                 fetchAdminData();
-    //             }
-    //         } catch (err) {
-    //             Swal.fire('Error', 'Could not delete user', 'error');
-    //         }
-    //     }
-    // };
 
     const handleToggleStatus = async (userId, status, name) => {
         try {
-            const res = await axios.put(`http://localhost:5000/api/admin/toggle-user/${userId}`, {
+            const res = await axios.put(`${API_URL}/api/admin/toggle-user/${userId}`, {
                 currentStatus: status
             });
             if (res.data.success) {
@@ -158,7 +138,7 @@ const chartOptions = {
 
     const handleViewExpenses = async (userId, username) => {
         try {
-            const res = await axios.get(`http://localhost:5000/api/admin/user-expenses/${userId}`);
+            const res = await axios.get(`${API_URL}/api/admin/user-expenses/${userId}`);
             if (res.data.success) {
                 setSelectedUserExpenses(res.data.expenses);
                 setSelectedUserName(username);
@@ -176,7 +156,7 @@ const chartOptions = {
 
     const handleUpdateUser = async () => {
         try {
-            const res = await axios.post(`http://localhost:5000/api/admin/update-user/${editData.id}`, editData);
+            const res = await axios.post(`${API_URL}/api/admin/update-user/${editData.id}`, editData);
             if (res.data.success) {
                 Swal.fire('Success!', 'Updated successfully.', 'success');
                 setShowEditModal(false);
@@ -198,7 +178,7 @@ const chartOptions = {
     const handleDeleteExpense = async (expenseId, userId, username) => {
         const result = await Swal.fire({ title: 'Are You Sure?', icon: 'warning', showCancelButton: true });
         if (result.isConfirmed) {
-            const res = await axios.delete(`http://localhost:5000/api/admin/delete-expense/${expenseId}`);
+            const res = await axios.delete(`${API_URL}/api/admin/delete-expense/${expenseId}`);
             if (res.data.success) {
                 Swal.fire('Deleted!', '', 'success');
                 handleViewExpenses(userId, username);
@@ -208,7 +188,7 @@ const chartOptions = {
 
     const fetchChartData = async () => {
         try {
-            const res = await axios.get('http://localhost:5000/api/admin/analytics/category-expenses');
+            const res = await axios.get(`${API_URL}/api/admin/analytics/category-expenses`);
             if (res.data.success) {
                 setChartData({
                     labels: res.data.labels,
@@ -224,7 +204,7 @@ const chartOptions = {
     useEffect(() => { if (showReportsModal) fetchChartData(); }, [showReportsModal]);
 
     const handleMasterReport = async () => {
-        const res = await axios.get('http://localhost:5000/api/admin/master-report');
+        const res = await axios.get(`${API_URL}/api/admin/master-report`);
         if (res.data.success) {
             const ws = XLSX.utils.json_to_sheet(res.data.data);
             const wb = XLSX.utils.book_new();
@@ -267,7 +247,7 @@ const chartOptions = {
 
    const handleCategoryReport = async () => {
     try {
-        const res = await axios.get('http://localhost:5000/api/admin/analytics/category-expenses');
+        const res = await axios.get(`${API_URL}/api/admin/analytics/category-expenses`);
         
         console.log("API Response:", res.data); // हे तपासा
 
@@ -330,7 +310,7 @@ const chartOptions = {
 
  const handleSavingsReport = async () => {
     try {
-        const res = await axios.get('http://localhost:5000/api/admin/analytics/user-savings');
+        const res = await axios.get(`${API_URL}/api/admin/analytics/user-savings`);
         
         if (res.data && res.data.success) {
             const savingsData = res.data.data.map((user) => {
@@ -364,7 +344,7 @@ const chartOptions = {
 
  const fetchCategories = async () => {
         try {
-            const res = await axios.get('http://localhost:5000/api/admin/categories');
+            const res = await axios.get(`${API_URL}/api/admin/categories`);
             setAllCategories(res.data);
         } catch (err) {
             console.error("Error fetching categories", err);
@@ -376,7 +356,7 @@ const chartOptions = {
 useEffect(() => {
     const fetchCategories = async () => {
         try {
-            const res = await axios.get('http://localhost:5000/api/admin/categories');
+            const res = await axios.get(`${API_URL}/api/admin/categories`);
             console.log("Categories from DB:", res.data); // हे चेक करा
             setAllCategories(res.data); 
         } catch (err) {
@@ -387,7 +367,7 @@ useEffect(() => {
 }, []);
 const handleAddCategory = async () => {
     try {
-        const res = await axios.post('http://localhost:5000/api/admin/categories', {
+        const res = await axios.post(`${API_URL}/api/admin/categories`, {
             profession, 
             category_name: newCategory 
         });
@@ -417,7 +397,7 @@ const handleDeleteCategory = async (id) => {
 
     if (confirm.isConfirmed) {
         try {
-            const res = await axios.delete(`http://localhost:5000/api/admin/delete-category/${id}`);
+            const res = await axios.delete(`${API_URL}/api/admin/delete-category/${id}`);
             if (res.data.success) {
                 Swal.fire('Deleted!', 'Category removed.', 'success');
                 fetchCategories(); // लिस्ट रिफ्रेश करा
@@ -442,7 +422,7 @@ const handleEditCategory = async (cat) => {
 
     if (newName && newName !== cat.category_name) {
         try {
-            const res = await axios.put(`http://localhost:5000/api/admin/update-category/${cat.id}`, {
+            const res = await axios.put(`${API_URL}/api/admin/update-category/${cat.id}`, {
                 category_name: newName
             });
             if (res.data.success) {
