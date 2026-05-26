@@ -1,11 +1,11 @@
 const mysql = require('mysql2/promise');
 
 const db = mysql.createPool({
-    host: 'localhost',
-    user: 'root',
-    password: '', 
-    database: 'smart_expense_tracker',
-    port: 3306, // तुम्ही स्क्रीनशॉटमध्ये दाखवल्याप्रमाणे ३३०७
+    host: process.env.DB_HOST,      
+    user: process.env.DB_USER,     
+    password: process.env.DB_PASSWORD, 
+    database: process.env.DB_NAME,
+    port: process.env.DB_PORT || 3306,
     waitForConnections: true,
     connectionLimit: 10,
     queueLimit: 0
