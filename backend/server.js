@@ -18,7 +18,7 @@ app.post('/api/login', async (req, res) => {
         // १. SQL क्वेरी (PostgreSQL साठी $1)
         const sql = "SELECT * FROM users WHERE email = $1";
         
-        // २. 'db.execute' ऐवजी 'db.query' वापरा
+       
         // 'pg' लायब्ररीमध्ये रिझल्ट 'rows' मध्ये मिळतात
         const { rows } = await db.query(sql, [email.trim()]);
 
@@ -97,7 +97,7 @@ app.put('/api/update-budget/:id', async (req, res) => {
         // SQL क्वेरी बरोबर आहे ($1, $2 वापरा)
         const sql = "UPDATE users SET budget = $1 WHERE id = $2";
         
-        // 'db.execute' ऐवजी 'db.query' वापरा
+        
         await db.query(sql, [budget, userId]);
         
         res.json({ success: true });
@@ -125,7 +125,7 @@ app.get('/api/admin/all-users', async (req, res) => {
         const sqlInactiveCount = "SELECT COUNT(*) as count FROM users WHERE is_active = 1 AND role != 'Admin'";
         const sqlTotalExpense = "SELECT SUM(amount) as total FROM expenses";
 
-        // २. 'db.execute' ऐवजी 'db.query' वापरा
+    
         const { rows: users } = await db.query(sqlUsers);
         const { rows: activeRes } = await db.query(sqlActiveCount);
         const { rows: inactiveRes } = await db.query(sqlInactiveCount);
@@ -152,7 +152,7 @@ app.get('/api/admin/user-expenses/:id', async (req, res) => {
         // SQL क्वेरी बरोबर आहे
         const sql = "SELECT * FROM expenses WHERE user_id = $1 ORDER BY date DESC";
         
-        // १. db.execute ऐवजी db.query वापरा
+        
         // २. 'const [expenses]' ऐवजी '{ rows: expenses }' वापरा
         const { rows: expenses } = await db.query(sql, [userId]);
         
@@ -175,7 +175,7 @@ app.put('/api/admin/toggle-user/:id', async (req, res) => {
         // SQL क्वेरी बरोबर आहे ($1, $2)
         const sql = "UPDATE users SET is_active = $1 WHERE id = $2";
         
-        // १. 'db.execute' ऐवजी 'db.query' वापरा
+        
         // २. PostgreSQL मध्ये 'result' मधून आपण 'rowCount' वापरू शकतो (हे रो अपडेट झाले की नाही हे सांगते)
         const result = await db.query(sql, [newStatus, userId]);
 
@@ -199,7 +199,7 @@ app.delete('/api/admin/delete-user/:id', async (req, res) => {
         // SQL क्वेरी बरोबर आहे ($1 वापरा)
         const sql = "DELETE FROM users WHERE id = $1";
         
-        // १. 'db.execute' ऐवजी 'db.query' वापरा
+       
         const result = await db.query(sql, [id]);
         
         // २. (पर्यायी) युजर डिलीट झाला की नाही हे चेक करा
@@ -223,7 +223,7 @@ app.post('/api/admin/update-user/:id', async (req, res) => {
         // १. SQL UPDATE Query (ही बरोबर आहे)
         const sql = "UPDATE users SET username = $1, role = $2, budget = $3 WHERE id = $4";
         
-        // २. 'db.execute' ऐवजी 'db.query' वापरा
+       
         const result = await db.query(sql, [username, role, budget, userId]);
 
         // ३. (पर्यायी) युजर अपडेट झाला की नाही हे तपासा
@@ -246,7 +246,7 @@ app.delete('/api/admin/delete-expense/:id', async (req, res) => {
         // १. क्वेरी बरोबर आहे ($1 वापरा)
         const sql = "DELETE FROM expenses WHERE id = $1";
         
-        // २. 'db.execute' ऐवजी 'db.query' वापरा
+       
         const result = await db.query(sql, [expenseId]);
 
         // ३. 'affectedRows' ऐवजी 'rowCount' वापरा (PostgreSQL साठी)
@@ -260,7 +260,26 @@ app.delete('/api/admin/delete-expense/:id', async (req, res) => {
         res.status(500).json({ success: false, message: "Database Error" });
     }
 });
+app.post('/add-expense', async (req, res) => {
+    const { userId, amount, category, date, description } = req.body;
 
+    // Check kara ki amount number madhe ahe ki nahi
+    if (!userId || !amount || !category) {
+        return res.status(400).json({ success: false, message: "Required fields missing" });
+    }
+
+    try {
+        const sql = `INSERT INTO expenses (user_id, amount, category, date, description) 
+                     VALUES ($1, $2, $3, $4, $5)`;
+        
+        await db.query(sql, [userId, amount, category, date, description]);
+        
+        res.status(200).json({ success: true, message: "Expense added successfully!" });
+    } catch (err) {
+        console.error("❌ Add Expense Error:", err);
+        res.status(500).json({ success: false, message: "Database Error", error: err.message });
+    }
+});
 app.get('/api/admin/global-search', async (req, res) => {
     const keyword = req.query.q;
     
@@ -273,8 +292,7 @@ app.get('/api/admin/global-search', async (req, res) => {
     `;
     
     try {
-        // ३. 'db.execute' ऐवजी 'db.query' वापरा
-        // ४. रिझल्ट 'rows' मध्ये मिळवा
+      
         const { rows } = await db.query(sql, [`%${keyword}%`]);
         
         res.json({ success: true, data: rows });
@@ -288,7 +306,7 @@ app.get('/api/admin/analytics/category-expenses', async (req, res) => {
     try {
         const sql = "SELECT category, SUM(amount) as total FROM expenses GROUP BY category";
         
-        // db.execute ऐवजी db.query वापरा
+       
         const { rows } = await db.query(sql);
         
         const labels = rows.map(item => item.category);
@@ -305,7 +323,7 @@ app.get('/api/admin/master-report', async (req, res) => {
     try {
         const sql = "SELECT users.username, expenses.* FROM expenses JOIN users ON expenses.user_id = users.id ORDER BY expenses.date DESC";
         
-        // db.execute ऐवजी db.query वापरा
+      
         const { rows } = await db.query(sql);
         
         res.json({ success: true, data: rows });
@@ -376,7 +394,7 @@ app.delete('/api/admin/delete-category/:id', async (req, res) => {
         const { id } = req.params;
         const sql = "DELETE FROM categories WHERE id = $1";
         
-        // १. db.execute ऐवजी db.query वापरा
+       
         const result = await db.query(sql, [id]);
 
         // २. affectedRows ऐवजी rowCount वापरा
@@ -519,7 +537,7 @@ app.get('/api/expenses', async (req, res) => {
     sql += " ORDER BY date DESC";
 
     try {
-        // ३. 'db.execute' ऐवजी 'db.query' वापरा
+       
         const { rows } = await db.query(sql, params);
         res.json(rows);
     } catch (err) {
@@ -546,7 +564,7 @@ app.get('/api/get-expenses/:userId', async (req, res) => {
     sql += " ORDER BY date DESC";
 
     try {
-        // ३. 'db.execute' ऐवजी 'db.query' वापरा (Postgres/pg साठी)
+       
         const { rows } = await db.query(sql, params); 
         res.json({ success: true, expenses: rows });
     } catch (err) {
@@ -561,7 +579,7 @@ app.put('/api/update-profile', async (req, res) => {
         
         const sql = "UPDATE users SET username = $1, email = $2, profession = $3 WHERE id = $4";
         
-        // db.execute ऐवजी db.query
+      
         const result = await db.query(sql, [newName, newEmail, newProfession, id]);
 
         // affectedRows ऐवजी rowCount
@@ -607,7 +625,27 @@ app.post('/api/forgot-password', async (req, res) => {
             [otp, expireTime, email]
         );
 
-        // ... (nodemailer चा भाग जसाच्या तसा ठेवा) ...
+       const mailOptions = {
+    from: '"Smart Expense Tracker" <sushmitapawar7276@gmail.com>',
+    to: email,
+     subject: 'Your Password Reset OTP',
+     html: `
+     <div style="font-family: Arial, sans-serif; text-align: center; padding: 20px; border: 1px solid #ddd;">
+ <h2 style="color: #333;">Password Reset OTP</h2>
+ <p>Use the following 6-digit code to change your password:</p>
+<h1 style="color: #3498db; font-size: 40px; letter-spacing: 10px; margin: 20px 0;">${otp}</h1>
+<p style="color: #666;">This code is valid for 10 minutes. Do not share it with anyone.
+</p>
+ <hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;">
+<p style="font-size: 12px; color: #aaa;">Smart Expense Tracker Team</p>
+ </div>
+ `
+};
+
+ transporter.sendMail(mailOptions, (err) => {
+if (err) return res.status(500).json({ success: false, message: "Email Error!" });
+ res.json({ success: true, message: "The OTP has been sent to your email!" });
+ });
     } catch (error) {
         res.status(500).json({ success: false, message: "Server Error!" });
     }
