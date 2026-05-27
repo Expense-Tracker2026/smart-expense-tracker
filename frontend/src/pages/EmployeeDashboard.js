@@ -257,7 +257,7 @@ const editExpense = (exp) => {
          html:
             `<input id="edit-title" class="swal2-input" placeholder="Title" value="${exp.title}">` +
             `<input id="edit-amount" type="number" class="swal2-input" placeholder="Amount" value="${exp.amount}" >` +
-            `<select id="edit-category" class="swal2-input" >
+            `<select id="edit-category" class="swal2-input" style="display: block; width: 100%; margin: 10px 0;">
                 <option value="">Select Category</option>
                 ${categoryOptions} 
             </select>`,
@@ -351,7 +351,7 @@ const editExpense = (exp) => {
             '<input id="swal-input1" class="swal2-input" placeholder="Expense Title">' +
             '<input id="swal-input2" type="number" class="swal2-input" placeholder="Amount (₹)" >' +
             // २. इथे आपण तयार केलेली categoryOptions स्ट्रिंग वापरली आहे
-            `<select id="swal-input3" class="swal2-input" >
+            `<select id="swal-input3" class="swal2-input" style="display: block; width: 100%; margin: 10px 0;">
                 <option value="">Select Category</option>
                 ${categoryOptions}
              </select>`,
