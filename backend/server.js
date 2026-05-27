@@ -267,7 +267,7 @@ app.post('/api/add-expense', async (req, res) => {
         const { user_id, title, amount, category, date } = req.body;
 
         // १. SQL क्वेरी (कॉलमची नावे तुमच्या डेटाबेस टेबलशी मॅच करा)
-        const sql = "INSERT INTO expenses (user_id, description, amount, category, date) VALUES ($1, $2, $3, $4, $5)";
+        const sql = "INSERT INTO expenses (user_id, title, amount, category, date) VALUES ($1, $2, $3, $4, $5)";
         
         // २. डेटाबेस क्वेरी एक्झिक्युट करा
         await db.query(sql, [user_id, title, amount, category, date]);
