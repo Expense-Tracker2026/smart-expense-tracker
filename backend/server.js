@@ -239,17 +239,15 @@ app.post('/api/admin/update-user/:id', async (req, res) => {
 });
 
 // server.js मध्ये हा कोड पेस्ट करा
-app.delete('/api/admin/delete-expense/:id', async (req, res) => {
+app.delete('/api/delete-expense/:id', async (req, res) => {
     try {
         const expenseId = req.params.id;
-        
-        // १. क्वेरी बरोबर आहे ($1 वापरा)
-        const sql = "DELETE FROM expenses WHERE id = $1";
-        
-       
-        const result = await db.query(sql, [expenseId]);
+        console.log("Deleting Expense ID:", expenseId);
 
-        // ३. 'affectedRows' ऐवजी 'rowCount' वापरा (PostgreSQL साठी)
+        // 'db.execute' ऐवजी 'db.query' वापरा
+        const sql = "DELETE FROM expenses WHERE id = $1";
+        const result = await db.query(sql, [expenseId]); 
+
         if (result.rowCount > 0) {
             res.json({ success: true, message: "Expense deleted successfully!" });
         } else {
