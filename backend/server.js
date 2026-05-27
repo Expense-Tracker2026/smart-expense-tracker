@@ -280,6 +280,33 @@ app.post('/api/add-expense', async (req, res) => {
         res.status(500).json({ success: false, message: "Database Error" });
     }
 });
+
+app.put('/api/edit-expense/:id', async (req, res) => {
+    try {
+        const expenseId = req.params.id; // URL मधून आयडी घेणे
+        const { title, amount, category, date } = req.body; // अपडेट करायची माहिती
+
+        // १. SQL क्वेरी (UPDATE कमांड)
+        // तुमच्या डेटाबेस कॉलमची नावे (title, amount इ.) तपासा
+        const sql = `UPDATE expenses 
+                     SET title = $1, amount = $2, category = $3, date = $4 
+                     WHERE id = $5`;
+        
+        // २. डेटाबेस क्वेरी एक्झिक्युट करा
+        const result = await db.query(sql, [title, amount, category, date, expenseId]);
+
+        // ३. जर आयडी सापडला असेल तर रिस्पॉन्स द्या
+        if (result.rowCount > 0) {
+            res.json({ success: true, message: "Expense updated successfully!" });
+        } else {
+            res.status(404).json({ success: false, message: "Expense not found." });
+        }
+
+    } catch (err) {
+        console.error("❌ Edit Expense Error:", err);
+        res.status(500).json({ success: false, message: "Database Error" });
+    }
+});
 app.get('/api/admin/global-search', async (req, res) => {
     const keyword = req.query.q;
     
