@@ -73,7 +73,7 @@ const scrollingMessage = topCategory
 const userEmail = localStorage.getItem('userEmail'); 
 console.log("Current User Email:", userEmail); // कंसोलमध्ये चेक कर ईमेल दिसतोय का
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
 
 useEffect(() => {
     const user = JSON.parse(localStorage.getItem('user')); // लॉगिन असलेल्या युजरची माहिती

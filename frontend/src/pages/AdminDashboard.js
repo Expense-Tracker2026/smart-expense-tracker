@@ -47,7 +47,7 @@ const employeeCats = allCategories.filter(c => c.profession === 'Employee');
 // २. फक्त नावांची लिस्ट (Array) तयार करा
 const studentNames = studentCats.map(c => c.category_name); // उदा: ["Gym", "Library"]
 const employeeNames = employeeCats.map(c => c.category_name); // उदा: ["Salary"]
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
 
 const professionChartData = {
     labels: ['Student', 'Employee'],

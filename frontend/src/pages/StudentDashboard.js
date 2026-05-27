@@ -23,9 +23,11 @@ const StudentDashboard = () => {
     const [savingsGoal, setSavingsGoal] = useState(Number(localStorage.getItem('tempGoal')) || 0);
     const [searchTerm, setSearchTerm] = useState('');
 
+     const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+
     useEffect(() => {
 
-        const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+       
         const user = JSON.parse(localStorage.getItem('user'));
         if (user && user.profession) {
             axios.get(`${API_URL}/api/user/categories/${user.profession}`)

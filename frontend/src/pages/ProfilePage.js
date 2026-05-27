@@ -42,7 +42,7 @@ const handleUpdate = async (e) => {
 
     try {
 
-        const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+        const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
         const res = await axios.put(`${API_URL}/api/update-profile`, updatePayload);
         
         if (res.data.success) {
