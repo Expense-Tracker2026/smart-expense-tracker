@@ -4,7 +4,7 @@ const bcrypt = require('bcrypt');
 async function startMigration() {
     // Supabase चे डेटाबेस कनेक्शन डिटेल्स इथे टाका
     const db = new Client({
-        connectionString: 'तुमची_Supabase_Connection_String_इथे_टाका'
+        connectionString: 'postgresql://postgres.lioqsvzabitnjkmftguu:expensetr@ker2026@aws-1-ap-southeast-2.pooler.supabase.com:6543/postgres'
     });
 
     await db.connect();

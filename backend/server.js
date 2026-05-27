@@ -389,14 +389,9 @@ app.get('/api/admin/analytics/user-savings', async (req, res) => {
 app.post('/api/admin/categories', async (req, res) => {
     try {
         const { profession, category_name } = req.body;
-        
-        if (!profession || !category_name) {
-            return res.status(400).json({ success: false, message: "सर्व फील्ड्स भरा" });
-        }
-
+        // तुमचा कोड ID पाठवत नाहीये, हेच हवे आहे! 
         const query = "INSERT INTO categories (profession, category_name) VALUES ($1, $2)";
         await db.query(query, [profession, category_name]);
-
         res.json({ success: true, message: "Category added successfully!" });
     } catch (err) {
         console.error(err);
