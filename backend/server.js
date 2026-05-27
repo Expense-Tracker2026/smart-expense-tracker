@@ -260,24 +260,24 @@ app.delete('/api/admin/delete-expense/:id', async (req, res) => {
         res.status(500).json({ success: false, message: "Database Error" });
     }
 });
-app.post('/add-expense', async (req, res) => {
-    const { userId, amount, category, date, description } = req.body;
 
-    // Check kara ki amount number madhe ahe ki nahi
-    if (!userId || !amount || !category) {
-        return res.status(400).json({ success: false, message: "Required fields missing" });
-    }
 
+app.post('/api/add-expense', async (req, res) => {
     try {
-        const sql = `INSERT INTO expenses (user_id, amount, category, date, description) 
-                     VALUES ($1, $2, $3, $4, $5)`;
+        const { user_id, title, amount, category, date } = req.body;
+
+        // १. SQL क्वेरी (कॉलमची नावे तुमच्या डेटाबेस टेबलशी मॅच करा)
+        const sql = "INSERT INTO expenses (user_id, description, amount, category, date) VALUES ($1, $2, $3, $4, $5)";
         
-        await db.query(sql, [userId, amount, category, date, description]);
-        
-        res.status(200).json({ success: true, message: "Expense added successfully!" });
+        // २. डेटाबेस क्वेरी एक्झिक्युट करा
+        await db.query(sql, [user_id, title, amount, category, date]);
+
+        // ३. सक्सेस रिस्पॉन्स
+        res.json({ success: true, message: "Expense added successfully!" });
+
     } catch (err) {
         console.error("❌ Add Expense Error:", err);
-        res.status(500).json({ success: false, message: "Database Error", error: err.message });
+        res.status(500).json({ success: false, message: "Database Error" });
     }
 });
 app.get('/api/admin/global-search', async (req, res) => {
