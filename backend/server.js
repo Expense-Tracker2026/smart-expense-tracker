@@ -675,25 +675,32 @@ app.post('/api/forgot-password', async (req, res) => {
 // नवीन पासवर्ड अपडेट करण्यासाठी API
 
 app.post('/api/reset-password', async (req, res) => {
-    const { otp, password } = req.body; 
-    try {
-        // [users] ऐवजी { rows } वापरा
-        const { rows } = await db.query(
-            "SELECT id FROM users WHERE reset_token = $1 AND token_expiry > NOW()", 
-            [otp]
-        );
+    const { email, otp, newPassword } = req.body;
+    console.log("🚀 Reset password request for:", email);
 
+    try {
+        // १. आधी युजर आहे का आणि OTP बरोबर आहे का ते तपासा
+        const { rows } = await db.query("SELECT id FROM users WHERE email = $1 AND reset_token = $2", [email, otp]);
+        
         if (rows.length === 0) {
-            return res.status(400).json({ success: false, message: "Invalid or expired OTP!" });
+            console.log("❌ Invalid OTP or Email");
+            return res.status(400).json({ success: false, message: "Invalid OTP!" });
         }
 
-        const hashedPassword = await bcrypt.hash(password, 10);
+        // २. पासवर्ड हॅश करा (येथे एरर असण्याची शक्यता असते)
+        const hashedPassword = await bcrypt.hash(newPassword, 10);
+        
+        // ३. पासवर्ड अपडेट करा आणि टोकन null करा
         await db.query(
-            "UPDATE users SET password = $1, reset_token = NULL, token_expiry = NULL WHERE id = $2", 
-            [hashedPassword, rows[0].id]
+            "UPDATE users SET password = $1, reset_token = NULL, token_expiry = NULL WHERE email = $2",
+            [hashedPassword, email]
         );
-        res.json({ success: true, message: "Password Changed Successfully!" });
+        
+        console.log("✅ Password reset successful for:", email);
+        res.json({ success: true, message: "Password updated successfully!" });
+
     } catch (error) {
+        console.error("🔥 Reset Password Error details:", error); // रेंडर लॉग्समध्ये इथे खरी एरर दिसेल
         res.status(500).json({ success: false, message: "Server Error!" });
     }
 });
