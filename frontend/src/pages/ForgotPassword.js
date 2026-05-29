@@ -12,7 +12,7 @@ const ForgotPassword = () => {
 const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-        const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+        const API_URL = 'https://smart-expense-tracker-n6kp.onrender.com';
         const res = await axios.post(`${API_URL}/api/forgot-password`, { email });
         if (res.data.success) {
             Swal.fire('Success', 'The OTP has been sent to your email!', 'success');
