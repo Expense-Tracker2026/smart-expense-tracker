@@ -642,12 +642,12 @@ app.post('/api/forgot-password', async (req, res) => {
         }
 
         const otp = Math.floor(100000 + Math.random() * 900000).toString();
-        const expireTime = new Date(Date.now() + 600000);
+        const expireTime = Date.now() + 600000;
 
         await db.query(
-            "UPDATE users SET reset_token = $1, token_expiry = $2 WHERE email = $3", 
-            [otp, expireTime, email]
-        );
+    "UPDATE users SET reset_token = $1, token_expiry = $2 WHERE email = $3", 
+    [otp, expireTime, email]
+);
         console.log("✅ OTP generated and updated in DB for:", email);
 
         const mailOptions = {
