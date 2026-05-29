@@ -620,11 +620,16 @@ const nodemailer = require('nodemailer');
 const crypto = require('crypto');
 
 const transporter = nodemailer.createTransport({
-    service: 'gmail',
+    host: 'smtp.gmail.com',
+    port: 587,            // 465 ऐवजी 587 वापरून पहा
+    secure: false,        // 587 साठी false वापरा
     auth: {
         user: 'sushmitapawar7276@gmail.com',
        
-         pass: 'qgfo ezix baim pgmr'   
+         pass: 'qgfo ezix baim pgmr'  
+    },
+    tls: {
+        rejectUnauthorized: false // हे रेंडरवर कनेक्शनसाठी खूप महत्त्वाचे आहे
     }
 });
 
