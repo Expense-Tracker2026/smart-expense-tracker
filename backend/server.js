@@ -623,50 +623,51 @@ const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
         user: 'sushmitapawar7276@gmail.com',
-        pass: 'qgfoezixbaimpgmr' 
+       
+         pass: 'qgfo ezix baim pgmr'   
     }
 });
 
 
 app.post('/api/forgot-password', async (req, res) => {
     const { email } = req.body;
+    console.log("🚀 API Received request for:", email); // रिक्वेस्ट आली आहे का हे समजेल
+
     try {
-        // [users] ऐवजी { rows } वापरा
         const { rows } = await db.query("SELECT id FROM users WHERE email = $1", [email]);
+        
         if (rows.length === 0) {
+            console.log("❌ Email not found in DB:", email);
             return res.status(404).json({ success: false, message: "Email is not registered!" });
         }
 
         const otp = Math.floor(100000 + Math.random() * 900000).toString();
-        const expireTime = new Date(Date.now() + 600000); // Postgres साठी Date ऑब्जेक्ट
+        const expireTime = new Date(Date.now() + 600000);
 
         await db.query(
             "UPDATE users SET reset_token = $1, token_expiry = $2 WHERE email = $3", 
             [otp, expireTime, email]
         );
+        console.log("✅ OTP generated and updated in DB for:", email);
 
-       const mailOptions = {
-    from: '"Smart Expense Tracker" <sushmitapawar7276@gmail.com>',
-    to: email,
-     subject: 'Your Password Reset OTP',
-     html: `
-     <div style="font-family: Arial, sans-serif; text-align: center; padding: 20px; border: 1px solid #ddd;">
- <h2 style="color: #333;">Password Reset OTP</h2>
- <p>Use the following 6-digit code to change your password:</p>
-<h1 style="color: #3498db; font-size: 40px; letter-spacing: 10px; margin: 20px 0;">${otp}</h1>
-<p style="color: #666;">This code is valid for 10 minutes. Do not share it with anyone.
-</p>
- <hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;">
-<p style="font-size: 12px; color: #aaa;">Smart Expense Tracker Team</p>
- </div>
- `
-};
+        const mailOptions = {
+            from: '"Smart Expense Tracker" <sushmitapawar7276@gmail.com>',
+            to: email,
+            subject: 'Your Password Reset OTP',
+            html: `<h1>${otp}</h1>`
+        };
 
- transporter.sendMail(mailOptions, (err) => {
-if (err) return res.status(500).json({ success: false, message: "Email Error!" });
- res.json({ success: true, message: "The OTP has been sent to your email!" });
- });
+        transporter.sendMail(mailOptions, (err, info) => {
+            if (err) {
+                console.error("❌ Nodemailer Error details:", err); // ईमेल का जात नाहीये ते इथे दिसेल
+                return res.status(500).json({ success: false, message: "Email Error!" });
+            }
+            console.log("📧 Email sent successfully:", info.response);
+            res.json({ success: true, message: "The OTP has been sent to your email!" });
+        });
+
     } catch (error) {
+        console.error("🔥 Server Error details:", error); // डेटाबेस किंवा कोडमधील एरर इथे दिसेल
         res.status(500).json({ success: false, message: "Server Error!" });
     }
 });
