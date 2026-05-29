@@ -620,23 +620,18 @@ const nodemailer = require('nodemailer');
 const crypto = require('crypto');
 
 const transporter = nodemailer.createTransport({
-    host: 'smtp.gmail.com',
-    port: 587,            // 465 ऐवजी 587 वापरून पहा
-    secure: false,        // 587 साठी false वापरा
+    host: process.env.EMAIL_HOST,
+    port: process.env.EMAIL_PORT,
     auth: {
-        user: 'sushmitapawar7276@gmail.com',
-       
-         pass: 'qgfo ezix baim pgmr'  
-    },
-    tls: {
-        rejectUnauthorized: false // हे रेंडरवर कनेक्शनसाठी खूप महत्त्वाचे आहे
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS
     }
 });
 
 
 app.post('/api/forgot-password', async (req, res) => {
     const { email } = req.body;
-    console.log("🚀 API Received request for:", email); // रिक्वेस्ट आली आहे का हे समजेल
+    console.log("🚀 API Received request for:", email);
 
     try {
         const { rows } = await db.query("SELECT id FROM users WHERE email = $1", [email]);
@@ -650,29 +645,27 @@ app.post('/api/forgot-password', async (req, res) => {
         const expireTime = Date.now() + 600000;
 
         await db.query(
-    "UPDATE users SET reset_token = $1, token_expiry = $2 WHERE email = $3", 
-    [otp, expireTime, email]
-);
+            "UPDATE users SET reset_token = $1, token_expiry = $2 WHERE email = $3", 
+            [otp, expireTime, email]
+        );
         console.log("✅ OTP generated and updated in DB for:", email);
 
+        // बदल: 'from' मध्ये आता process.env वापरणे अधिक चांगले राहील
         const mailOptions = {
-            from: '"Smart Expense Tracker" <sushmitapawar7276@gmail.com>',
+            from: '"Smart Expense Tracker" <no-reply@smart-expense.com>',
             to: email,
             subject: 'Your Password Reset OTP',
-            html: `<h1>${otp}</h1>`
+            html: `<h1>Your OTP is: ${otp}</h1>`
         };
 
-        transporter.sendMail(mailOptions, (err, info) => {
-            if (err) {
-                console.error("❌ Nodemailer Error details:", err); // ईमेल का जात नाहीये ते इथे दिसेल
-                return res.status(500).json({ success: false, message: "Email Error!" });
-            }
-            console.log("📧 Email sent successfully:", info.response);
-            res.json({ success: true, message: "The OTP has been sent to your email!" });
-        });
+        // बदल: इथे callback ऐवजी await वापरले आहे (हे अधिक सुरक्षित आहे)
+        await transporter.sendMail(mailOptions);
+        
+        console.log("📧 Email sent successfully to:", email);
+        res.json({ success: true, message: "The OTP has been sent to your email!" });
 
     } catch (error) {
-        console.error("🔥 Server Error details:", error); // डेटाबेस किंवा कोडमधील एरर इथे दिसेल
+        console.error("🔥 Server Error details:", error);
         res.status(500).json({ success: false, message: "Server Error!" });
     }
 });
